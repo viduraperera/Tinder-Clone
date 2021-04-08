@@ -1,21 +1,26 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import "./TinderCard.css";
 import TinderCard from "react-tinder-card";
+import axios from './axios';
 import * as url from "url";
 
 function TinderCards(){
     //state to get track of people in tinder
     //initialize a veritable in react
-    const [people, setPeople] = useState([
-        {
-            name: 'Elon Mack',
-            ulr: "https://upload.wikimedia.org/wikipedia/commons/8/85/Elon_Musk_Royal_Society_%28crop1%29.jpg",
-        },
-        {
-            name: 'Jeff Bezos',
-            ulr: "https://cdn.britannica.com/56/199056-050-CCC44482/Jeff-Bezos-2017.jpg",
-        },
-    ]);
+    const [people, setPeople] = useState([]);
+
+
+    useEffect(()=>{
+        async function fetchData(){
+            const  req = await axios.get('/tinder/cards');
+
+            setPeople(req.data);
+        }
+        fetchData();
+        //[] do is tinderCards loads once and not run it again
+    }, []);
+
+    console.log(people);
 
     const swiped = (direction, nameToDelete) =>{
         console.log("removing" + nameToDelete);
@@ -41,7 +46,7 @@ function TinderCards(){
 
                        <div
                            //having a background where to have rendered url
-                        style={{backgroundImage: `url(${person.ulr})`}}
+                        style={{backgroundImage: `url(${person.imgUrl})`}}
                         className={"card"}
                        >
                            <h3>{person.name}</h3>
